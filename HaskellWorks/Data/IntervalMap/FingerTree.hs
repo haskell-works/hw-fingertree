@@ -68,7 +68,7 @@ data Interval v = Interval { low :: v, high :: v }
 point :: v -> Interval v
 point v = Interval v v
 
-data Node v a = Node (Interval v) a
+data Node v a = Node (Interval v) a deriving (Generic, NFData)
 
 instance Functor (Node v) where
     fmap f (Node i x) = Node i (f x)
@@ -80,7 +80,7 @@ instance Traversable (Node v) where
     traverse f (Node i x) = Node i <$> f x
 
 -- rightmost interval (including largest lower bound) and largest upper bound.
-data IntInterval v = NoInterval | IntInterval (Interval v) v
+data IntInterval v = NoInterval | IntInterval (Interval v) v deriving (Generic, NFData)
 
 instance Ord v => Monoid (IntInterval v) where
     mempty = NoInterval
@@ -97,6 +97,7 @@ instance (Ord v) => Measured (IntInterval v) (Node v a) where
 -- lexicographical order.
 newtype IntervalMap v a =
     IntervalMap (FingerTree (IntInterval v) (Node v a))
+    deriving (Generic, NFData)
 -- ordered lexicographically by interval
 
 instance Functor (IntervalMap v) where
