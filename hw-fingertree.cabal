@@ -46,6 +46,7 @@ Test-suite ft-properties
   cpp-options: -DTESTING
   build-depends:
                 base >= 4.2 && < 6,
+                deepseq,
                 HUnit,
                 QuickCheck,
                 test-framework,

@@ -39,7 +39,7 @@ module HaskellWorks.Data.IntervalMap.FingerTree (
     -- * Intervals
     Interval(..), point,
     -- * Interval maps
-    IntervalMap, empty, singleton, insert, union,
+    IntervalMap(..), empty, singleton, insert, union,
     -- * Searching
     search, intersections, dominators
     ) where
