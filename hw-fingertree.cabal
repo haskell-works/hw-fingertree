@@ -29,7 +29,8 @@ Source-Repository head
   Location: https://github.com/haskell-works/hw-fingertree
 
 Library
-  Build-Depends: base < 6
+  Build-Depends:  base < 6
+                , deepseq
   Extensions:   MultiParamTypeClasses
                 FunctionalDependencies
                 FlexibleInstances
