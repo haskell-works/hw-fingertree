@@ -1,10 +1,12 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                   #-}
+{-# LANGUAGE DeriveAnyClass        #-}
+{-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 #if __GLASGOW_HASKELL__ >= 702
-{-# LANGUAGE Safe #-}
+{-# LANGUAGE Safe                  #-}
 #endif
 #if __GLASGOW_HASKELL__ >= 710
-{-# LANGUAGE AutoDeriveTypeable #-}
+{-# LANGUAGE AutoDeriveTypeable    #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -42,13 +44,16 @@ module HaskellWorks.Data.IntervalMap.FingerTree (
     search, intersections, dominators
     ) where
 
+import           HaskellWorks.Data.FingerTree (FingerTree, Measured (..),
+                                               ViewL (..), (<|), (><))
 import qualified HaskellWorks.Data.FingerTree as FT
-import HaskellWorks.Data.FingerTree (FingerTree, Measured(..), ViewL(..), (<|), (><))
 
-import Control.Applicative ((<$>))
-import Data.Traversable (Traversable(traverse))
-import Data.Foldable (Foldable(foldMap))
-import Data.Monoid
+import           Control.Applicative          ((<$>))
+import           Control.DeepSeq
+import           Data.Foldable                (Foldable (foldMap))
+import           Data.Monoid
+import           Data.Traversable             (Traversable (traverse))
+import           GHC.Generics
 
 ----------------------------------
 -- 4.8 Application: interval trees
@@ -57,7 +62,7 @@ import Data.Monoid
 -- | A closed interval.  The lower bound should be less than or equal
 -- to the higher bound.
 data Interval v = Interval { low :: v, high :: v }
-    deriving (Eq, Ord, Show)
+    deriving (Eq, Ord, Show, Generic, NFData)
 
 -- | An interval in which the lower and upper bounds are equal.
 point :: v -> Interval v
@@ -126,7 +131,7 @@ insert i x (IntervalMap t) = IntervalMap (l >< Node i x <| r)
   where
     (l, r) = FT.split larger t
     larger (IntInterval k _) = k >= i
-    larger NoInterval = error "larger NoInterval"
+    larger NoInterval        = error "larger NoInterval"
 
 -- | /O(m log (n/\//m))/.  Merge two interval maps.
 -- The map may contain duplicate intervals; entries with equal intervals
@@ -140,14 +145,14 @@ union (IntervalMap xs) (IntervalMap ys) = IntervalMap (merge1 xs ys)
           where
             (l, r) = FT.split larger bs
             larger (IntInterval k _) = k >= i
-            larger NoInterval = error "larger NoInterval"
+            larger NoInterval        = error "larger NoInterval"
     merge2 as bs = case FT.viewl bs of
         EmptyL                  -> as
         b@(Node i _) :< bs'     -> l >< b <| merge1 r bs'
           where
             (l, r) = FT.split larger as
             larger (IntInterval k _) = k > i
-            larger NoInterval = error "larger NoInterval"
+            larger NoInterval        = error "larger NoInterval"
 
 -- | /O(k log (n/\//k))/.  All intervals that intersect with the given
 -- interval, in lexicographical order.
@@ -170,16 +175,16 @@ inRange :: (Ord v) => v -> v -> IntervalMap v a -> [(Interval v, a)]
 inRange lo hi (IntervalMap t) = matches (FT.takeUntil (greater hi) t)
   where
     matches xs  =  case FT.viewl (FT.dropUntil (atleast lo) xs) of
-        EmptyL    ->  []
-        Node i x :< xs'  ->  (i, x) : matches xs'
+        EmptyL          ->  []
+        Node i x :< xs' ->  (i, x) : matches xs'
 
 atleast :: (Ord v) => v -> IntInterval v -> Bool
 atleast k (IntInterval _ hi) = k <= hi
-atleast _ NoInterval = error "atleast NoInterval"
+atleast _ NoInterval         = error "atleast NoInterval"
 
 greater :: (Ord v) => v -> IntInterval v -> Bool
 greater k (IntInterval i _) = low i > k
-greater _ NoInterval = error "greater NoInterval"
+greater _ NoInterval        = error "greater NoInterval"
 
 {-
 -- Examples
