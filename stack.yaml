@@ -3,7 +3,8 @@ resolver: lts-9.6
 packages:
 - '.'
 
-extra-deps: []
+extra-deps:
+- hedgehog-0.5
 
 flags: {}
 
