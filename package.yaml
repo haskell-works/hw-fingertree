@@ -39,16 +39,16 @@ dependencies:
 - deepseq
 
 library:
-  exposed-modules:
-  - HaskellWorks.Data.FingerTree
-  - HaskellWorks.Data.IntervalMap.FingerTree
-  - HaskellWorks.Data.PriorityQueue.FingerTree
+  source-dirs: src
   dependencies:
   - base <6
 
 tests:
-  ft-properties:
-    main: tests/ft-properties.hs
+  hw-fingertree-tests:
+    source-dirs:
+      - tests
+      - src
+    main: ft-properties.hs
     cpp-options: -DTESTING
     dependencies:
     - base >=4.2 && <6
