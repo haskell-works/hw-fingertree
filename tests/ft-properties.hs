@@ -1,10 +1,9 @@
 {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
--- QuickCheck properties for Data.FingerTree
 
 module Main where
 
-import HaskellWorks.Data.FingerTree    -- needs to be compiled with -DTESTING for use here
+import HaskellWorks.Data.FingerTree
 
 import Test.Framework
 import Test.Framework.Providers.HUnit
