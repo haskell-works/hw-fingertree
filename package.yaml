@@ -46,13 +46,16 @@ library:
 tests:
   hw-fingertree-tests:
     source-dirs:
-      - tests
-      - src
-    main: ft-properties.hs
+    - tests
+    - src
+    main: Spec.hs
     cpp-options: -DTESTING
     dependencies:
     - base >=4.2 && <6
     - HUnit
+    - hspec
+    - hedgehog
+    - hw-hspec-hedgehog
     - hw-fingertree
     - QuickCheck
     - test-framework

@@ -1,11 +1,11 @@
-resolver: lts-9.6
+resolver: lts-10.5
 
 packages:
 - '.'
 
 extra-deps:
-- hedgehog-0.5
-- hw-hspec-hedgehog-0.1.0.0
+- hedgehog-0.5.2
+- hw-hspec-hedgehog-0.1.0.2
 
 flags: {}
 
