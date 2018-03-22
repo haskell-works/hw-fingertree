@@ -4,25 +4,27 @@
 
 module HaskellWorks.Data.FingerTreeSpec (spec) where
 
-import Data.Monoid
+import Control.Applicative          (Applicative (..))
+import Control.Monad                (ap)
+import Data.Foldable                (Foldable (foldMap, foldl, foldr), all, toList)
+import Data.Functor                 ((<$>))
+import Data.List                    (inits)
+import Data.Monoid                  (Monoid (..))
+import Data.Traversable             (traverse)
 import HaskellWorks.Data.FingerTree
-import Test.Hspec
-import Hedgehog hiding (evalM)
 import HaskellWorks.Hspec.Hedgehog
-import Control.Applicative (Applicative(..))
-import Control.Monad (ap)
-import Data.Foldable (Foldable(foldMap, foldl, foldr), toList, all)
-import Data.Functor ((<$>))
-import Data.Traversable (traverse)
-import Data.List (inits)
-import Data.Monoid (Monoid(..))
-import Prelude hiding (null, reverse)
+import Hedgehog                     hiding (evalM)
+import Prelude                      hiding (null, reverse)
+import Test.Hspec
 
-
-import qualified Prelude                          as P
 import qualified HaskellWorks.Data.FingerTree.Gen as G
 import qualified Hedgehog.Gen                     as G
 import qualified Hedgehog.Range                   as R
+import qualified Prelude                          as P
+
+{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
+{-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
+{-# ANN module ("HLint: redundant bracket"          :: String) #-}
 
 spec :: Spec
 spec = do

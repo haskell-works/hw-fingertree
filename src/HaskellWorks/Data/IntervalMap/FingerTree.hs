@@ -44,16 +44,16 @@ module HaskellWorks.Data.IntervalMap.FingerTree (
     search, intersections, dominators
     ) where
 
-import           HaskellWorks.Data.FingerTree (FingerTree, Measured (..),
-                                               ViewL (..), (<|), (><))
-import qualified HaskellWorks.Data.FingerTree as FT
+import Control.Applicative          ((<$>))
+import Control.DeepSeq
+import Data.Foldable                (Foldable (foldMap))
+import Data.Monoid
+import Data.Traversable             (Traversable (traverse))
+import GHC.Generics
+import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><))
 
-import           Control.Applicative          ((<$>))
-import           Control.DeepSeq
-import           Data.Foldable                (Foldable (foldMap))
-import           Data.Monoid
-import           Data.Traversable             (Traversable (traverse))
-import           GHC.Generics
+import qualified Data.Semigroup               as S
+import qualified HaskellWorks.Data.FingerTree as FT
 
 ----------------------------------
 -- 4.8 Application: interval trees
@@ -82,12 +82,21 @@ instance Traversable (Node v) where
 -- rightmost interval (including largest lower bound) and largest upper bound.
 data IntInterval v = NoInterval | IntInterval (Interval v) v deriving (Generic, NFData)
 
+appendInterval :: Ord v => IntInterval v -> IntInterval v -> IntInterval v
+appendInterval (NoInterval       ) (i                   ) = i
+appendInterval (i                ) (NoInterval          ) = i
+appendInterval (IntInterval _ hi1) (IntInterval int2 hi2) = IntInterval int2 (max hi1 hi2)
+{-# INLINE appendInterval #-}
+
+instance Ord v => S.Semigroup (IntInterval v) where
+  (<>) = appendInterval
+  {-# INLINE (<>) #-}
+
 instance Ord v => Monoid (IntInterval v) where
-    mempty = NoInterval
-    NoInterval `mappend` i  = i
-    i `mappend` NoInterval  = i
-    IntInterval _ hi1 `mappend` IntInterval int2 hi2 =
-        IntInterval int2 (max hi1 hi2)
+  mempty = NoInterval
+  {-# INLINE mempty #-}
+  mappend = appendInterval
+  {-# INLINE mappend #-}
 
 instance (Ord v) => Measured (IntInterval v) (Node v a) where
     measure (Node i _) = IntInterval i (high i)
@@ -110,10 +119,16 @@ instance Traversable (IntervalMap v) where
     traverse f (IntervalMap t) =
         IntervalMap <$> FT.unsafeTraverse (traverse f) t
 
+instance (Ord v) => S.Semigroup (IntervalMap v a) where
+  (<>) = union
+  {-# INLINE (<>) #-}
+
 -- | 'empty' and 'union'.
 instance (Ord v) => Monoid (IntervalMap v a) where
     mempty = empty
+    {-# INLINE mempty #-}
     mappend = union
+    {-# INLINE mappend #-}
 
 -- | /O(1)/.  The empty interval map.
 empty :: (Ord v) => IntervalMap v a

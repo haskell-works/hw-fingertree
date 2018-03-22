@@ -65,13 +65,15 @@ module HaskellWorks.Data.FingerTree (
     -- $example
     ) where
 
-import           Prelude             hiding (null, reverse)
+import Prelude hiding (null, reverse)
 
-import           Control.Applicative (Applicative (pure, (<*>)), (<$>))
-import           Control.DeepSeq
-import           Data.Foldable       (Foldable (foldMap), toList)
-import           Data.Monoid
-import           GHC.Generics        (Generic)
+import Control.Applicative (Applicative (pure, (<*>)), (<$>))
+import Control.DeepSeq
+import Data.Foldable       (Foldable (foldMap), toList)
+import Data.Monoid
+import GHC.Generics        (Generic)
+
+import qualified Data.Semigroup as S
 
 infixr 5 ><
 infixr 5 <|, :<
@@ -98,10 +100,16 @@ instance Functor s => Functor (ViewR s) where
     fmap _ EmptyR    = EmptyR
     fmap f (xs :> x) = fmap f xs :> f x
 
+instance Measured v a => S.Semigroup (FingerTree v a) where
+  (<>) = (><)
+  {-# INLINE (<>) #-}
+
 -- | 'empty' and '><'.
 instance Measured v a => Monoid (FingerTree v a) where
-    mempty = empty
-    mappend = (><)
+  mempty = empty
+  {-# INLINE mempty #-}
+  mappend = (><)
+  {-# INLINE mappend #-}
 
 -- Explicit Digit type (Exercise 1)
 

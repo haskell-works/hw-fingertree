@@ -1,10 +1,10 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP                   #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 #if __GLASGOW_HASKELL__ >= 702
-{-# LANGUAGE Safe #-}
+{-# LANGUAGE Safe                  #-}
 #endif
 #if __GLASGOW_HASKELL__ >= 710
-{-# LANGUAGE AutoDeriveTypeable #-}
+{-# LANGUAGE AutoDeriveTypeable    #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -54,13 +54,14 @@ module HaskellWorks.Data.PriorityQueue.FingerTree (
     minViewWithKey
     ) where
 
-import qualified HaskellWorks.Data.FingerTree as FT
-import HaskellWorks.Data.FingerTree (FingerTree, (<|), (|>), (><), ViewL(..), Measured(..))
-
-import Control.Arrow ((***))
-import Data.Foldable (Foldable(foldMap))
+import Control.Arrow                ((***))
+import Data.Foldable                (Foldable (foldMap))
 import Data.Monoid
-import Prelude hiding (null)
+import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><), (|>))
+import Prelude                      hiding (null)
+
+import qualified Data.Semigroup               as S
+import qualified HaskellWorks.Data.FingerTree as FT
 
 data Entry k v = Entry k v
 
@@ -72,13 +73,21 @@ instance Foldable (Entry k) where
 
 data Prio k v = NoPrio | Prio k v
 
+appendPrio :: Ord k => Prio k v -> Prio k v -> Prio k v
+appendPrio (x            ) (NoPrio       ) = x
+appendPrio (NoPrio       ) (y            ) = y
+appendPrio (x@(Prio kx _)) (y@(Prio ky _)) = if kx <= ky then x else y
+{-# INLINE appendPrio #-}
+
+instance Ord k => S.Semigroup (Prio k v) where
+  (<>) = appendPrio
+  {-# INLINE (<>) #-}
+
 instance Ord k => Monoid (Prio k v) where
-    mempty                  = NoPrio
-    x `mappend` NoPrio      = x
-    NoPrio `mappend` y      = y
-    x@(Prio kx _) `mappend` y@(Prio ky _)
-      | kx <= ky            = x
-      | otherwise           = y
+    mempty  = NoPrio
+    {-# INLINE mempty #-}
+    mappend = appendPrio
+    {-# INLINE mappend #-}
 
 instance Ord k => Measured (Prio k v) (Entry k v) where
     measure (Entry k v) = Prio k v
@@ -91,12 +100,18 @@ instance Ord k => Functor (PQueue k) where
 
 instance Ord k => Foldable (PQueue k) where
     foldMap f q = case minView q of
-        Nothing -> mempty
+        Nothing      -> mempty
         Just (v, q') -> f v `mappend` foldMap f q'
 
+instance Ord k => S.Semigroup (PQueue k v) where
+  (<>) = union
+  {-# INLINE (<>) #-}
+
 instance Ord k => Monoid (PQueue k v) where
-    mempty = empty
-    mappend = union
+  mempty = empty
+  {-# INLINE mempty #-}
+  mappend = union
+  {-# INLINE mappend #-}
 
 -- | /O(1)/. The empty priority queue.
 empty :: Ord k => PQueue k v
@@ -171,11 +186,11 @@ minViewWithKey (PQueue q)
   | FT.null q = Nothing
   | otherwise = Just ((k, v), case FT.viewl r of
     _ :< r' -> PQueue (l >< r')
-    _ -> error "can't happen")
+    _       -> error "can't happen")
   where
     Prio k v = measure q
     (l, r) = FT.split (below k) q
 
 below :: Ord k => k -> Prio k v -> Bool
-below _ NoPrio = False
+below _ NoPrio      = False
 below k (Prio k' _) = k' <= k

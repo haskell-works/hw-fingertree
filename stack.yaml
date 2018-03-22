@@ -6,6 +6,9 @@ packages:
 extra-deps:
 - hedgehog-0.5.2
 - hw-hspec-hedgehog-0.1.0.2
+- async-2.1.1.1
+- lifted-async-0.9.3.3
+- pretty-show-1.6.16
 
 flags: {}
 
