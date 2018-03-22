@@ -74,9 +74,9 @@ instance Foldable (Entry k) where
 data Prio k v = NoPrio | Prio k v
 
 appendPrio :: Ord k => Prio k v -> Prio k v -> Prio k v
-appendPrio (x            ) (NoPrio       ) = x
-appendPrio (NoPrio       ) (y            ) = y
-appendPrio (x@(Prio kx _)) (y@(Prio ky _)) = if kx <= ky then x else y
+appendPrio x             NoPrio        = x
+appendPrio NoPrio        y             = y
+appendPrio x@(Prio kx _) y@(Prio ky _) = if kx <= ky then x else y
 {-# INLINE appendPrio #-}
 
 instance Ord k => S.Semigroup (Prio k v) where
