@@ -1,5 +1,5 @@
 name: hw-fingertree
-version: '0.1.0.0'
+version: '0.1.0.1'
 synopsis: Generic finger-tree structure, with example instances
 description: ! 'A general sequence representation with arbitrary
 
