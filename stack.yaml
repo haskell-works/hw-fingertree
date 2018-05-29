@@ -1,7 +1,14 @@
-resolver: lts-12.0
+resolver: lts-11.17
 
 packages:
 - '.'
+
+extra-deps:
+- hedgehog-0.5.3
+- hw-hspec-hedgehog-0.1.0.4
+- async-2.1.1.1
+- lifted-async-0.9.3.3
+- pretty-show-1.6.16
 
 flags: {}
 
