@@ -1,11 +1,11 @@
-resolver: lts-10.5
+resolver: lts-10.10
 
 packages:
 - '.'
 
 extra-deps:
-- hedgehog-0.5.2
-- hw-hspec-hedgehog-0.1.0.2
+- hedgehog-0.5.3
+- hw-hspec-hedgehog-0.1.0.4
 - async-2.1.1.1
 - lifted-async-0.9.3.3
 - pretty-show-1.6.16
