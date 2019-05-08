@@ -14,11 +14,9 @@ cabal.sandbox.config
 *.prof
 *.aux
 *.hp
-*.cabal
 *.eventlog
 .stack-work/
 cabal.project.local
-*.cabal
 
 /hedgehog-*
 
