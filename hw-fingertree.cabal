@@ -1,0 +1,79 @@
+-- This file has been generated from package.yaml by hpack version 0.28.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: c2f6874bab4b3518585ed030a068e75d1981f3b6fe268b9d164d5254162a710b
+
+name:           hw-fingertree
+version:        0.1.0.1
+synopsis:       Generic finger-tree structure, with example instances
+description:    A general sequence representation with arbitrary
+                annotations, for use as a base for implementations of
+                various collection types, with examples, as described
+                in section 4 of
+                .
+                * Ralf Hinze and Ross Paterson,
+                \"Finger trees: a simple general-purpose data structure\",
+                /Journal of Functional Programming/ 16:2 (2006) pp 197-217.
+                <http://staff.city.ac.uk/~ross/papers/FingerTree.html>
+                .
+                For a tuned sequence type, see @Data.Sequence@ in the
+                @containers@ package, which is a specialization of
+                this structure.
+category:       Data Structures
+homepage:       https://github.com/haskell-works/hw-fingertree#readme
+bug-reports:    https://github.com/haskell-works/hw-fingertree/issues
+maintainer:     John Ky <newhoggy@gmail.com>
+copyright:      (c) 2006 Ross Paterson,
+                Ralf Hinze,
+                (c) 2017-2018 John Ky
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+source-repository head
+  type: git
+  location: https://github.com/haskell-works/hw-fingertree
+
+library
+  exposed-modules:
+      HaskellWorks.Data.FingerTree
+      HaskellWorks.Data.IntervalMap.FingerTree
+      HaskellWorks.Data.PriorityQueue.FingerTree
+  other-modules:
+      Paths_hw_fingertree
+  hs-source-dirs:
+      src
+  build-depends:
+      base <6
+    , deepseq
+  default-language: Haskell2010
+
+test-suite hw-fingertree-tests
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      HaskellWorks.Data.FingerTree.Gen
+      HaskellWorks.Data.FingerTreeSpec
+      HaskellWorks.Data.FingerTree
+      HaskellWorks.Data.IntervalMap.FingerTree
+      HaskellWorks.Data.PriorityQueue.FingerTree
+      Paths_hw_fingertree
+  hs-source-dirs:
+      tests
+      src
+  cpp-options: -DTESTING
+  build-depends:
+      HUnit
+    , QuickCheck
+    , base >=4.2 && <6
+    , deepseq
+    , hedgehog
+    , hspec
+    , hw-fingertree
+    , hw-hspec-hedgehog
+    , test-framework
+    , test-framework-hunit
+    , test-framework-quickcheck2
+  default-language: Haskell2010
