@@ -39,20 +39,20 @@
 --
 -----------------------------------------------------------------------------
 
-module HaskellWorks.Data.PriorityQueue.FingerTree (
-    PQueue,
+module HaskellWorks.Data.PriorityQueue.FingerTree
+  ( PQueue
     -- * Construction
-    empty,
-    singleton,
-    union,
-    insert,
-    add,
-    fromList,
+  , empty
+  , singleton
+  , union
+  , insert
+  , add
+  , fromList
     -- * Deconstruction
-    null,
-    minView,
-    minViewWithKey
-    ) where
+  , null
+  , minView
+  , minViewWithKey
+  ) where
 
 import Control.Arrow                ((***))
 import Data.Foldable                (Foldable (foldMap))
@@ -66,10 +66,10 @@ import qualified HaskellWorks.Data.FingerTree as FT
 data Entry k v = Entry k v
 
 instance Functor (Entry k) where
-    fmap f (Entry k v) = Entry k (f v)
+  fmap f (Entry k v) = Entry k (f v)
 
 instance Foldable (Entry k) where
-    foldMap f (Entry _ v) = f v
+  foldMap f (Entry _ v) = f v
 
 data Prio k v = NoPrio | Prio k v
 
@@ -84,24 +84,24 @@ instance Ord k => S.Semigroup (Prio k v) where
   {-# INLINE (<>) #-}
 
 instance Ord k => Monoid (Prio k v) where
-    mempty  = NoPrio
-    {-# INLINE mempty #-}
-    mappend = appendPrio
-    {-# INLINE mappend #-}
+  mempty  = NoPrio
+  {-# INLINE mempty #-}
+  mappend = appendPrio
+  {-# INLINE mappend #-}
 
 instance Ord k => Measured (Prio k v) (Entry k v) where
-    measure (Entry k v) = Prio k v
+  measure (Entry k v) = Prio k v
 
 -- | Priority queues.
 newtype PQueue k v = PQueue (FingerTree (Prio k v) (Entry k v))
 
 instance Ord k => Functor (PQueue k) where
-    fmap f (PQueue xs) = PQueue (FT.fmap' (fmap f) xs)
+  fmap f (PQueue xs) = PQueue (FT.fmap' (fmap f) xs)
 
 instance Ord k => Foldable (PQueue k) where
-    foldMap f q = case minView q of
-        Nothing      -> mempty
-        Just (v, q') -> f v `mappend` foldMap f q'
+  foldMap f q = case minView q of
+    Nothing      -> mempty
+    Just (v, q') -> f v `mappend` foldMap f q'
 
 instance Ord k => S.Semigroup (PQueue k v) where
   (<>) = union
@@ -187,9 +187,8 @@ minViewWithKey (PQueue q)
   | otherwise = Just ((k, v), case FT.viewl r of
     _ :< r' -> PQueue (l >< r')
     _       -> error "can't happen")
-  where
-    Prio k v = measure q
-    (l, r) = FT.split (below k) q
+  where Prio k v = measure q
+        (l, r) = FT.split (below k) q
 
 below :: Ord k => k -> Prio k v -> Bool
 below _ NoPrio      = False

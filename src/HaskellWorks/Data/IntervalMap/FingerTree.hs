@@ -35,14 +35,21 @@
 --
 -----------------------------------------------------------------------------
 
-module HaskellWorks.Data.IntervalMap.FingerTree (
-    -- * Intervals
-    Interval(..), point,
+module HaskellWorks.Data.IntervalMap.FingerTree
+  ( -- * Intervals
+    Interval(..)
+  , point
     -- * Interval maps
-    IntervalMap(..), empty, singleton, insert, union,
+  , IntervalMap(..)
+  , empty
+  , singleton
+  , insert
+  , union
     -- * Searching
-    search, intersections, dominators
-    ) where
+  , search
+  , intersections
+  , dominators
+  ) where
 
 import Control.Applicative          ((<$>))
 import Control.DeepSeq
@@ -62,7 +69,7 @@ import qualified HaskellWorks.Data.FingerTree as FT
 -- | A closed interval.  The lower bound should be less than or equal
 -- to the higher bound.
 data Interval v = Interval { low :: v, high :: v }
-    deriving (Eq, Ord, Show, Generic, NFData)
+  deriving (Eq, Ord, Show, Generic, NFData)
 
 -- | An interval in which the lower and upper bounds are equal.
 point :: v -> Interval v
@@ -71,13 +78,13 @@ point v = Interval v v
 data Node v a = Node (Interval v) a deriving (Generic, NFData)
 
 instance Functor (Node v) where
-    fmap f (Node i x) = Node i (f x)
+  fmap f (Node i x) = Node i (f x)
 
 instance Foldable (Node v) where
-    foldMap f (Node _ x) = f x
+  foldMap f (Node _ x) = f x
 
 instance Traversable (Node v) where
-    traverse f (Node i x) = Node i <$> f x
+  traverse f (Node i x) = Node i <$> f x
 
 -- rightmost interval (including largest lower bound) and largest upper bound.
 data IntInterval v = NoInterval | IntInterval (Interval v) v deriving (Generic, NFData)
@@ -99,25 +106,24 @@ instance Ord v => Monoid (IntInterval v) where
   {-# INLINE mappend #-}
 
 instance (Ord v) => Measured (IntInterval v) (Node v a) where
-    measure (Node i _) = IntInterval i (high i)
+  measure (Node i _) = IntInterval i (high i)
 
 -- | Map of closed intervals, possibly with duplicates.
 -- The 'Foldable' and 'Traversable' instances process the intervals in
 -- lexicographical order.
 newtype IntervalMap v a =
-    IntervalMap (FingerTree (IntInterval v) (Node v a))
-    deriving (Generic, NFData)
+  IntervalMap (FingerTree (IntInterval v) (Node v a))
+  deriving (Generic, NFData)
 -- ordered lexicographically by interval
 
 instance Functor (IntervalMap v) where
-    fmap f (IntervalMap t) = IntervalMap (FT.unsafeFmap (fmap f) t)
+  fmap f (IntervalMap t) = IntervalMap (FT.unsafeFmap (fmap f) t)
 
 instance Foldable (IntervalMap v) where
-    foldMap f (IntervalMap t) = foldMap (foldMap f) t
+  foldMap f (IntervalMap t) = foldMap (foldMap f) t
 
 instance Traversable (IntervalMap v) where
-    traverse f (IntervalMap t) =
-        IntervalMap <$> FT.unsafeTraverse (traverse f) t
+  traverse f (IntervalMap t) = IntervalMap <$> FT.unsafeTraverse (traverse f) t
 
 instance (Ord v) => S.Semigroup (IntervalMap v a) where
   (<>) = union
@@ -125,10 +131,10 @@ instance (Ord v) => S.Semigroup (IntervalMap v a) where
 
 -- | 'empty' and 'union'.
 instance (Ord v) => Monoid (IntervalMap v a) where
-    mempty = empty
-    {-# INLINE mempty #-}
-    mappend = union
-    {-# INLINE mappend #-}
+  mempty = empty
+  {-# INLINE mempty #-}
+  mappend = union
+  {-# INLINE mappend #-}
 
 -- | /O(1)/.  The empty interval map.
 empty :: (Ord v) => IntervalMap v a
@@ -144,31 +150,27 @@ singleton i x = IntervalMap (FT.singleton (Node i x))
 insert :: (Ord v) => Interval v -> a -> IntervalMap v a -> IntervalMap v a
 insert (Interval lo hi) _ m | lo > hi = m
 insert i x (IntervalMap t) = IntervalMap (l >< Node i x <| r)
-  where
-    (l, r) = FT.split larger t
-    larger (IntInterval k _) = k >= i
-    larger NoInterval        = error "larger NoInterval"
+  where (l, r) = FT.split larger t
+        larger (IntInterval k _) = k >= i
+        larger NoInterval        = error "larger NoInterval"
 
 -- | /O(m log (n/\//m))/.  Merge two interval maps.
 -- The map may contain duplicate intervals; entries with equal intervals
 -- are kept in the original order.
-union  ::  (Ord v) => IntervalMap v a -> IntervalMap v a -> IntervalMap v a
+union  :: (Ord v) => IntervalMap v a -> IntervalMap v a -> IntervalMap v a
 union (IntervalMap xs) (IntervalMap ys) = IntervalMap (merge1 xs ys)
-  where
-    merge1 as bs = case FT.viewl as of
-        EmptyL                  -> bs
-        a@(Node i _) :< as'     -> l >< a <| merge2 as' r
-          where
-            (l, r) = FT.split larger bs
-            larger (IntInterval k _) = k >= i
-            larger NoInterval        = error "larger NoInterval"
-    merge2 as bs = case FT.viewl bs of
-        EmptyL                  -> as
-        b@(Node i _) :< bs'     -> l >< b <| merge1 r bs'
-          where
-            (l, r) = FT.split larger as
-            larger (IntInterval k _) = k > i
-            larger NoInterval        = error "larger NoInterval"
+  where merge1 as bs = case FT.viewl as of
+          EmptyL              -> bs
+          a@(Node i _) :< as' -> l >< a <| merge2 as' r
+            where (l, r) = FT.split larger bs
+                  larger (IntInterval k _) = k >= i
+                  larger NoInterval        = error "larger NoInterval"
+        merge2 as bs = case FT.viewl bs of
+          EmptyL              -> as
+          b@(Node i _) :< bs' -> l >< b <| merge1 r bs'
+            where (l, r) = FT.split larger as
+                  larger (IntInterval k _) = k > i
+                  larger NoInterval        = error "larger NoInterval"
 
 -- | /O(k log (n/\//k))/.  All intervals that intersect with the given
 -- interval, in lexicographical order.
@@ -189,10 +191,9 @@ search p = inRange p p
 -- interval, in lexicographical order.
 inRange :: (Ord v) => v -> v -> IntervalMap v a -> [(Interval v, a)]
 inRange lo hi (IntervalMap t) = matches (FT.takeUntil (greater hi) t)
-  where
-    matches xs  =  case FT.viewl (FT.dropUntil (atleast lo) xs) of
-        EmptyL          ->  []
-        Node i x :< xs' ->  (i, x) : matches xs'
+  where matches xs  =  case FT.viewl (FT.dropUntil (atleast lo) xs) of
+          EmptyL          ->  []
+          Node i x :< xs' ->  (i, x) : matches xs'
 
 atleast :: (Ord v) => v -> IntInterval v -> Bool
 atleast k (IntInterval _ hi) = k <= hi
