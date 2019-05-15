@@ -1,9 +1,3 @@
--- This file has been generated from package.yaml by hpack version 0.28.2.
---
--- see: https://github.com/sol/hpack
---
--- hash: c2f6874bab4b3518585ed030a068e75d1981f3b6fe268b9d164d5254162a710b
-
 name:           hw-fingertree
 version:        0.1.0.1
 synopsis:       Generic finger-tree structure, with example instances
@@ -77,3 +71,4 @@ test-suite hw-fingertree-tests
     , test-framework-hunit
     , test-framework-quickcheck2
   default-language: Haskell2010
+  build-tools: hspec-discover
