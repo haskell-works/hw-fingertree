@@ -1,3 +1,5 @@
+cabal-version:  2.2
+
 name:           hw-fingertree
 version:        0.1.0.1
 synopsis:       Generic finger-tree structure, with example instances
@@ -18,57 +20,61 @@ category:       Data Structures
 homepage:       https://github.com/haskell-works/hw-fingertree#readme
 bug-reports:    https://github.com/haskell-works/hw-fingertree/issues
 maintainer:     John Ky <newhoggy@gmail.com>
-copyright:      (c) 2006 Ross Paterson,
-                Ralf Hinze,
-                (c) 2017-2018 John Ky
-license:        BSD3
+copyright:      (c) 2017-2019 John Ky
+                (c) 2006 Ross Paterson, Ralf Hinze,
+license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
-cabal-version:  >= 1.10
+
+common base                       { build-depends: base                       >= 4          && < 5      }
+
+common HUnit                      { build-depends: HUnit                                                }
+common QuickCheck                 { build-depends: QuickCheck                                           }
+common deepseq                    { build-depends: deepseq                                              }
+common hedgehog                   { build-depends: hedgehog                                             }
+common hspec                      { build-depends: hspec                                                }
+common hw-fingertree              { build-depends: hw-fingertree                                        }
+common hw-hspec-hedgehog          { build-depends: hw-hspec-hedgehog                                    }
+common test-framework             { build-depends: test-framework                                       }
+common test-framework-hunit       { build-depends: test-framework-hunit                                 }
+common test-framework-quickcheck2 { build-depends: test-framework-quickcheck2                           }
+
+common config
+  default-language: Haskell2010
 
 source-repository head
   type: git
   location: https://github.com/haskell-works/hw-fingertree
 
 library
+  import:   base, config
+          , deepseq
+  hs-source-dirs:     src
+  other-modules:      Paths_hw_fingertree
+  autogen-modules:    Paths_hw_fingertree
   exposed-modules:
-      HaskellWorks.Data.FingerTree
-      HaskellWorks.Data.IntervalMap.FingerTree
-      HaskellWorks.Data.PriorityQueue.FingerTree
-  other-modules:
-      Paths_hw_fingertree
-  hs-source-dirs:
-      src
-  build-depends:
-      base <6
-    , deepseq
-  default-language: Haskell2010
+    HaskellWorks.Data.FingerTree
+    HaskellWorks.Data.IntervalMap.FingerTree
+    HaskellWorks.Data.PriorityQueue.FingerTree
 
 test-suite hw-fingertree-tests
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
+  import:   base, config
+          , HUnit
+          , QuickCheck
+          , deepseq
+          , hedgehog
+          , hspec
+          , hw-hspec-hedgehog
+          , test-framework
+          , test-framework-hunit
+          , test-framework-quickcheck2
+  build-depends:      hw-fingertree
+  type:               exitcode-stdio-1.0
+  main-is:            Spec.hs
+  hs-source-dirs:     tests
+  build-tools:        hspec-discover
+  autogen-modules:    Paths_hw_fingertree
   other-modules:
-      HaskellWorks.Data.FingerTree.Gen
-      HaskellWorks.Data.FingerTreeSpec
-      HaskellWorks.Data.FingerTree
-      HaskellWorks.Data.IntervalMap.FingerTree
-      HaskellWorks.Data.PriorityQueue.FingerTree
-      Paths_hw_fingertree
-  hs-source-dirs:
-      tests
-      src
-  cpp-options: -DTESTING
-  build-depends:
-      HUnit
-    , QuickCheck
-    , base >=4.2 && <6
-    , deepseq
-    , hedgehog
-    , hspec
-    , hw-fingertree
-    , hw-hspec-hedgehog
-    , test-framework
-    , test-framework-hunit
-    , test-framework-quickcheck2
-  default-language: Haskell2010
-  build-tools: hspec-discover
+    HaskellWorks.Data.FingerTree.Gen
+    HaskellWorks.Data.FingerTreeSpec
+    Paths_hw_fingertree
