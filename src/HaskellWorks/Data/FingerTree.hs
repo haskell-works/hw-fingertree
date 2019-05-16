@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP                    #-}
 {-# LANGUAGE DeriveAnyClass         #-}
+{-# LANGUAGE DeriveFunctor          #-}
 {-# LANGUAGE DeriveGeneric          #-}
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
@@ -128,7 +129,7 @@ data Digit a
   | Two a a
   | Three a a a
   | Four a a a a
-  deriving (Show, Generic, NFData)
+  deriving (Show, Generic, NFData, Functor)
 
 instance Foldable Digit where
   foldMap f (One a)        = f a
