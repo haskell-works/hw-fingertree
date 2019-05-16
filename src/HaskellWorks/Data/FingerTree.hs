@@ -1,22 +1,20 @@
+{-# LANGUAGE AutoDeriveTypeable     #-}
 {-# LANGUAGE CPP                    #-}
 {-# LANGUAGE DeriveAnyClass         #-}
 {-# LANGUAGE DeriveFunctor          #-}
 {-# LANGUAGE DeriveGeneric          #-}
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE UndecidableInstances   #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe                   #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710
-{-# LANGUAGE AutoDeriveTypeable     #-}
-#endif
+{-# LANGUAGE UndecidableInstances   #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.FingerTree
--- Copyright   :  (c) Ross Paterson, Ralf Hinze 2006
+-- Copyright   :  (c) John Ky, 2016-2019
+                  (c) Ross Paterson, Ralf Hinze 2006
 -- License     :  BSD-style
--- Maintainer  :  R.Paterson@city.ac.uk
+-- Maintainer  :  newhoggy@gmail.com
 -- Stability   :  experimental
 -- Portability :  non-portable (MPTCs and functional dependencies)
 --

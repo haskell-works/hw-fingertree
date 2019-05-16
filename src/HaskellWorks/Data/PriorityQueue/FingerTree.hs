@@ -1,17 +1,15 @@
+{-# LANGUAGE AutoDeriveTypeable    #-}
 {-# LANGUAGE CPP                   #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe                  #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710
-{-# LANGUAGE AutoDeriveTypeable    #-}
-#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.PriorityQueue.FingerTree
--- Copyright   :  (c) Ross Paterson 2008
+-- Copyright   :  (c) John Ky, 2016-2019
+                  (c) Ross Paterson 2008
 -- License     :  BSD-style
--- Maintainer  :  R.Paterson@city.ac.uk
+-- Maintainer  :  newhoggy@gmail.com
 -- Stability   :  experimental
 -- Portability :  non-portable (MPTCs and functional dependencies)
 --
