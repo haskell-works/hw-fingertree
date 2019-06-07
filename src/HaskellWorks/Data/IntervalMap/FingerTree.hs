@@ -2,9 +2,6 @@
 {-# LANGUAGE DeriveAnyClass        #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-#if __GLASGOW_HASKELL__ >= 702
-{-# LANGUAGE Safe                  #-}
-#endif
 #if __GLASGOW_HASKELL__ >= 710
 {-# LANGUAGE AutoDeriveTypeable    #-}
 #endif
@@ -57,7 +54,7 @@ import Data.Foldable                (Foldable (foldMap))
 import Data.Monoid
 import Data.Traversable             (Traversable (traverse))
 import GHC.Generics
-import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><))
+import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><), (|>))
 
 import qualified Data.Semigroup               as S
 import qualified HaskellWorks.Data.FingerTree as FT
