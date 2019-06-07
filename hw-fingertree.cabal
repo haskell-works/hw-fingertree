@@ -33,6 +33,7 @@ common hedgehog                   { build-depends: hedgehog                     
 common hspec                      { build-depends: hspec                                                }
 common hw-fingertree              { build-depends: hw-fingertree                                        }
 common hw-hspec-hedgehog          { build-depends: hw-hspec-hedgehog                                    }
+common hw-prim                    { build-depends: hw-prim                    >= 0.6.2.25   && < 0.7    }
 
 common config
   default-language: Haskell2010
@@ -44,6 +45,7 @@ source-repository head
 library
   import:   base, config
           , deepseq
+          , hw-prim
   hs-source-dirs:     src
   other-modules:      Paths_hw_fingertree
   autogen-modules:    Paths_hw_fingertree
