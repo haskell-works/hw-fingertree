@@ -5,9 +5,7 @@
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE UndecidableInstances   #-}
-#if __GLASGOW_HASKELL__ >= 702
-{-# LANGUAGE Safe                   #-}
-#endif
+{-# LANGUAGE TypeFamilies           #-}
 #if __GLASGOW_HASKELL__ >= 710
 {-# LANGUAGE AutoDeriveTypeable     #-}
 #endif
@@ -53,9 +51,7 @@ module HaskellWorks.Data.FingerTree
   -- * Construction
   , empty
   , singleton
-  , (<|)
-  , (|>)
-  , (><)
+  , append
   , fromList
   -- * Deconstruction
   , null
@@ -76,20 +72,26 @@ module HaskellWorks.Data.FingerTree
   , unsafeTraverse
   -- * Example
   -- $example
+  , (><)
+  , (<|)
+  , (|>)
   ) where
 
-import Control.Applicative (Applicative (pure, (<*>)), (<$>))
+import Control.Applicative          (Applicative (pure, (<*>)), (<$>))
 import Control.DeepSeq
-import Data.Foldable       (Foldable (foldMap), toList)
+import Data.Foldable                (Foldable (foldMap), toList)
 import Data.Monoid
-import GHC.Generics        (Generic)
-import Prelude             hiding (null, reverse)
+import GHC.Generics                 (Generic)
+import HaskellWorks.Data.Container
+import HaskellWorks.Data.Cons
+import HaskellWorks.Data.Snoc
+import HaskellWorks.Data.Ops
+import Prelude                      hiding (null, reverse)
 
 import qualified Data.Semigroup as S
 
-infixr 5 ><
-infixr 5 <|, :<
-infixl 5 |>, :>
+infixr 5 :<
+infixl 5 :>
 
 -- | View of the left end of a sequence.
 data ViewL s a
@@ -112,17 +114,18 @@ instance Functor s => Functor (ViewR s) where
   fmap f (xs :> x) = fmap f xs :> f x
 
 instance Measured v a => S.Semigroup (FingerTree v a) where
-  (<>) = (><)
+  (<>) = append
   {-# INLINE (<>) #-}
 
 -- | 'empty' and '><'.
 instance Measured v a => Monoid (FingerTree v a) where
   mempty = empty
   {-# INLINE mempty #-}
-  mappend = (><)
+  mappend = append
   {-# INLINE mappend #-}
 
--- Explicit Digit type (Exercise 1)
+instance Container (FingerTree v a) where
+  type Elem (FingerTree v a) = a
 
 data Digit a
   = One a
@@ -363,12 +366,12 @@ fromList = foldr (<|) Empty
 
 -- | /O(1)/. Add an element to the left end of a sequence.
 -- Mnemonic: a triangle with the single element at the pointy end.
-(<|) :: (Measured v a) => a -> FingerTree v a -> FingerTree v a
-a <| Empty                      = Single a
-a <| Single b                   = deep (One a) Empty (One b)
-a <| Deep v (Four b c d e) m sf = m `seq` Deep (measure a `mappend` v) (Two a b) (node3 c d e <| m) sf
-a <| Deep v pr m sf             = Deep (measure a `mappend` v) (consDigit a pr) m sf
-
+instance Measured v a => Cons (FingerTree v a) where
+  cons a (Empty                     ) = Single a
+  cons a (Single b                  ) = deep (One a) Empty (One b)
+  cons a (Deep v (Four b c d e) m sf) = m `seq` Deep (measure a `mappend` v) (Two a b) (node3 c d e <| m) sf
+  cons a (Deep v pr m sf            ) = Deep (measure a `mappend` v) (consDigit a pr) m sf
+  
 consDigit :: a -> Digit a -> Digit a
 consDigit a (One b)        = Two a b
 consDigit a (Two b c)      = Three a b c
@@ -377,11 +380,12 @@ consDigit _ (Four _ _ _ _) = illegalArgument "consDigit"
 
 -- | /O(1)/. Add an element to the right end of a sequence.
 -- Mnemonic: a triangle with the single element at the pointy end.
-(|>) :: (Measured v a) => FingerTree v a -> a -> FingerTree v a
-Empty |> a                      = Single a
-Single a |> b                   = deep (One a) Empty (One b)
-Deep v pr m (Four a b c d) |> e = m `seq` Deep (v `mappend` measure e) pr (m |> node3 a b c) (Two d e)
-Deep v pr m sf |> x             = Deep (v `mappend` measure x) pr m (snocDigit sf x)
+instance Measured v a => Snoc (FingerTree v a) where
+  snoc (Empty                     ) a = Single a
+  snoc (Single a                  ) b = deep (One a) Empty (One b)
+  snoc (Deep v pr m (Four a b c d)) e = m `seq` Deep (v `mappend` measure e) pr (m |> node3 a b c) (Two d e)
+  snoc (Deep v pr m sf            ) x = Deep (v `mappend` measure x) pr m (snocDigit sf x)
+  
 
 snocDigit :: Digit a -> a -> Digit a
 snocDigit (One a) b        = Two a b
@@ -453,8 +457,8 @@ digitToTree (Four a b c d) = deep (Two a b) Empty (Two c d)
 ----------------
 
 -- | /O(log(min(n1,n2)))/. Concatenate two sequences.
-(><) :: (Measured v a) => FingerTree v a -> FingerTree v a -> FingerTree v a
-(><) =  appendTree0
+append :: (Measured v a) => FingerTree v a -> FingerTree v a -> FingerTree v a
+append =  appendTree0
 
 appendTree0 :: (Measured v a) => FingerTree v a -> FingerTree v a -> FingerTree v a
 appendTree0 Empty xs                                = xs
