@@ -46,9 +46,9 @@ library
   import:   base, config
           , deepseq
           , hw-prim
-  hs-source-dirs:     src
-  other-modules:      Paths_hw_fingertree
-  autogen-modules:    Paths_hw_fingertree
+  hs-source-dirs:       src
+  other-modules:        Paths_hw_fingertree
+  autogen-modules:      Paths_hw_fingertree
   exposed-modules:
     HaskellWorks.Data.FingerTree
     HaskellWorks.Data.IntervalMap.FingerTree
@@ -60,12 +60,12 @@ test-suite hw-fingertree-tests
           , hedgehog
           , hspec
           , hw-hspec-hedgehog
-  build-depends:      hw-fingertree
-  type:               exitcode-stdio-1.0
-  main-is:            Spec.hs
-  hs-source-dirs:     tests
-  build-tools:        hspec-discover
-  autogen-modules:    Paths_hw_fingertree
+  build-depends:        hw-fingertree
+  type:                 exitcode-stdio-1.0
+  main-is:              Spec.hs
+  hs-source-dirs:       tests
+  build-tool-depends:   hspec-discover:hspec-discover
+  autogen-modules:      Paths_hw_fingertree
   other-modules:
     HaskellWorks.Data.FingerTree.Gen
     HaskellWorks.Data.FingerTreeSpec
