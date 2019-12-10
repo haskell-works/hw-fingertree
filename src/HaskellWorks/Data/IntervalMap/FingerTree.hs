@@ -51,10 +51,10 @@ module HaskellWorks.Data.IntervalMap.FingerTree
 import Control.Applicative          ((<$>))
 import Control.DeepSeq
 import Data.Foldable                (Foldable (foldMap))
-import Data.Monoid
+import Data.Monoid                  (Monoid (..))
 import Data.Traversable             (Traversable (traverse))
 import GHC.Generics
-import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><), (|>))
+import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><))
 
 import qualified Data.Semigroup               as S
 import qualified HaskellWorks.Data.FingerTree as FT
