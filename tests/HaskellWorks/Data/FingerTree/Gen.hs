@@ -26,8 +26,8 @@ shrinkFingerTree (Deep _ pr m sf) =
     [deep pr' m  sf  | pr' <- shrinkDigit      pr] ++
     [deep pr  m' sf  | m'  <- shrinkFingerTree m ] ++
     [deep pr  m  sf' | sf' <- shrinkDigit      sf]
-shrinkFingerTree (Single x) = []
-shrinkFingerTree Empty = []
+shrinkFingerTree (Single _) = []
+shrinkFingerTree Empty      = []
 
 fingerTree :: (MonadGen m, Measured v a) => m a -> m (FingerTree v a)
 fingerTree gen = G.sized $ \size -> genSizedFingerTree size gen
@@ -36,10 +36,10 @@ genSizedFingerTree :: (MonadGen m, Measured v a) => Size -> m a -> m (FingerTree
 genSizedFingerTree n gen = G.shrink shrinkFingerTree $ case n of
     0 -> return Empty
     1 -> Single <$> gen
-    n -> deep <$> (One <$> gen) <*> genSizedFingerTree (n `div` 2) (genSizedNode (n `div` 2) gen) <*> (One <$> gen)
+    o -> deep <$> (One <$> gen) <*> genSizedFingerTree (o `div` 2) (genSizedNode (o `div` 2) gen) <*> (One <$> gen)
 
 shrinkNode :: Measured v a => Node v a -> [Node v a]
-shrinkNode (Node2 _ a b) = []
+shrinkNode (Node2 _ _ _  ) = []
 shrinkNode (Node3 _ a b c) = [node2 a  b, node2 a c, node2 b c]
 
 genSizedNode :: (MonadGen m, Measured v a) => Size -> m a -> m (Node v a)
@@ -49,7 +49,7 @@ genSizedNode n gen = G.shrink shrinkNode $ G.choice
     ]
 
 shrinkDigit :: Digit a -> [Digit a]
-shrinkDigit (One a)         = []
-shrinkDigit (Two a b)       = [One a, One b]
-shrinkDigit (Three a b c)   = [Two a b, Two a c, Two b c]
-shrinkDigit (Four a b c d)  = [Three a b c, Three a b d, Three a c d, Three b c d]
+shrinkDigit (One    _      ) = []
+shrinkDigit (Two    a b    ) = [One a, One b]
+shrinkDigit (Three  a b c  ) = [Two a b, Two a c, Two b c]
+shrinkDigit (Four   a b c d) = [Three a b c, Three a b d, Three a c d, Three b c d]

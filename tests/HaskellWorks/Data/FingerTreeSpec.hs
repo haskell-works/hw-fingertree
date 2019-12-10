@@ -118,9 +118,9 @@ spec = do
     toList' (evalM (traverse' f xs)) ~== evalM (traverse f (toList xs))
   it "traverseWithPos" $ require $ property $ do
     xs <- forAll (G.fingerTree (G.int R.constantBounded))
-    let f xs y = do
+    let f ys y = do
           n <- step
-          return (xs, n, y)
+          return (ys, n, y)
     let xs_list = toList xs
     toList' (evalM (traverseWithPos f xs)) ~== evalM (traverse (uncurry f) (zip (inits xs_list) xs_list))
 
