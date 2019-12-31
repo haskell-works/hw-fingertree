@@ -70,10 +70,8 @@ test-suite hw-fingertree-tests
   main-is:              Spec.hs
   hs-source-dirs:       tests
   build-tool-depends:   hspec-discover:hspec-discover
-  autogen-modules:      Paths_hw_fingertree
   other-modules:        HaskellWorks.Data.FingerTree.Gen
                         HaskellWorks.Data.FingerTreeSpec
-                        Paths_hw_fingertree
 
 test-suite doctest
   import:               base, config
