@@ -80,7 +80,6 @@ module HaskellWorks.Data.FingerTree
 import Control.Applicative          (Applicative (pure, (<*>)), (<$>))
 import Control.DeepSeq
 import Data.Foldable                (Foldable (foldMap), toList)
-import Data.Monoid
 import GHC.Generics                 (Generic)
 import HaskellWorks.Data.Container
 import HaskellWorks.Data.Cons
