@@ -20,26 +20,26 @@ category:               Data Structures
 homepage:               https://github.com/haskell-works/hw-fingertree#readme
 bug-reports:            https://github.com/haskell-works/hw-fingertree/issues
 maintainer:             John Ky <newhoggy@gmail.com>
-copyright:              (c) 2017-2019 John Ky
+copyright:              (c) 2017-2020 John Ky
                         (c) 2006 Ross Paterson, Ralf Hinze,
 license:                BSD-3-Clause
 license-file:           LICENSE
-tested-with:            GHC == 8.8.3, GHC == 8.6.5, GHC == 8.4.4, GHC == 8.2.2
+tested-with:            GHC == 8.8.3, GHC == 8.6.5, GHC == 8.4.4
 build-type:             Simple
 
 source-repository head
   type: git
   location: https://github.com/haskell-works/hw-fingertree
 
-common base                     { build-depends: base                     >= 4          && < 5      }
+common base                       { build-depends: base                       >= 4.11       && < 5      }
 
-common deepseq                  { build-depends: deepseq                  >= 1.4        && < 1.5    }
-common doctest                  { build-depends: doctest                  >= 0.16.2     && < 0.17   }
-common doctest-discover         { build-depends: doctest-discover         >= 0.2        && < 0.3    }
-common hedgehog                 { build-depends: hedgehog                 >= 0.6        && < 1.1    }
-common hspec                    { build-depends: hspec                    >= 2.4        && < 3.0    }
-common hw-hspec-hedgehog        { build-depends: hw-hspec-hedgehog        >= 0.1        && < 0.2    }
-common hw-prim                  { build-depends: hw-prim                  >= 0.6.2.25   && < 0.7    }
+common deepseq                    { build-depends: deepseq                    >= 1.4        && < 1.5    }
+common doctest                    { build-depends: doctest                    >= 0.16.2     && < 0.17   }
+common doctest-discover           { build-depends: doctest-discover           >= 0.2        && < 0.3    }
+common hedgehog                   { build-depends: hedgehog                   >= 0.6        && < 1.1    }
+common hspec                      { build-depends: hspec                      >= 2.4        && < 3.0    }
+common hw-hspec-hedgehog          { build-depends: hw-hspec-hedgehog          >= 0.1        && < 0.2    }
+common hw-prim                    { build-depends: hw-prim                    >= 0.6.2.25   && < 0.7    }
 
 common config
   default-language:     Haskell2010
