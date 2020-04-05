@@ -9,7 +9,6 @@ import Control.Monad                (ap)
 import Data.Foldable                (Foldable (foldMap, foldl, foldr), all, toList)
 import Data.Functor                 ((<$>))
 import Data.List                    (inits)
-import Data.Monoid                  (Monoid (..))
 import Data.Traversable             (traverse)
 import HaskellWorks.Data.FingerTree
 import HaskellWorks.Hspec.Hedgehog

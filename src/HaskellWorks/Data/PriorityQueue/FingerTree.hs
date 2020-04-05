@@ -53,7 +53,6 @@ module HaskellWorks.Data.PriorityQueue.FingerTree
 
 import Control.Arrow                ((***))
 import Data.Foldable                (Foldable (foldMap))
-import Data.Monoid
 import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><), (|>))
 import Prelude                      hiding (null)
 
