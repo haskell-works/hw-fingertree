@@ -67,6 +67,7 @@ test-suite hw-fingertree-tests
                       , hw-fingertree
                       , hw-hspec-hedgehog
   type:                 exitcode-stdio-1.0
+  ghc-options:          -threaded -rtsopts -with-rtsopts=-N
   main-is:              Spec.hs
   hs-source-dirs:       tests
   build-tool-depends:   hspec-discover:hspec-discover
