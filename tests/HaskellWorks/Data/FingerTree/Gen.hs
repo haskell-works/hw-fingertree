@@ -43,7 +43,7 @@ shrinkNode (Node2 _ _ _  ) = []
 shrinkNode (Node3 _ a b c) = [node2 a  b, node2 a c, node2 b c]
 
 genSizedNode :: (MonadGen m, Measured v a) => Size -> m a -> m (Node v a)
-genSizedNode n gen = G.shrink shrinkNode $ G.choice
+genSizedNode _ gen = G.shrink shrinkNode $ G.choice
     [ node2 <$> gen <*> gen
     , node3 <$> gen <*> gen <*> gen
     ]
