@@ -51,7 +51,7 @@ module HaskellWorks.Data.PriorityQueue.FingerTree
   , minViewWithKey
   ) where
 
-import Control.Arrow                ((***))
+import Data.Bifunctor               (first)
 import Data.Foldable                (Foldable (foldMap))
 import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><), (|>))
 import Prelude                      hiding (null)
@@ -161,7 +161,7 @@ null (PQueue q) = FT.null q
 --  * @'minView' ('singleton' k v) = 'Just' (v, 'empty')@
 --
 minView :: Ord k => PQueue k v -> Maybe (v, PQueue k v)
-minView q = fmap (snd *** id) (minViewWithKey q)
+minView q = fmap (first snd) (minViewWithKey q)
 
 -- | /O(1)/ for the element, /O(log(n))/ for the reduced queue.
 -- Returns 'Nothing' for an empty map, or the minimal (priority, value)

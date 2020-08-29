@@ -92,6 +92,9 @@ import qualified Data.Semigroup as S
 infixr 5 :<
 infixl 5 :>
 
+{- HLINT ignore "Reduce duplication"  -}
+{- HLINT ignore "Use record patterns" -}
+
 -- | View of the left end of a sequence.
 data ViewL s a
   = EmptyL        -- ^ empty sequence
@@ -366,7 +369,7 @@ fromList = foldr (<|) Empty
 -- | /O(1)/. Add an element to the left end of a sequence.
 -- Mnemonic: a triangle with the single element at the pointy end.
 instance Measured v a => Cons (FingerTree v a) where
-  cons a (Empty                     ) = Single a
+  cons a  Empty                       = Single a
   cons a (Single b                  ) = deep (One a) Empty (One b)
   cons a (Deep v (Four b c d e) m sf) = m `seq` Deep (measure a `mappend` v) (Two a b) (node3 c d e <| m) sf
   cons a (Deep v pr m sf            ) = Deep (measure a `mappend` v) (consDigit a pr) m sf
@@ -380,7 +383,7 @@ consDigit _ (Four _ _ _ _) = illegalArgument "consDigit"
 -- | /O(1)/. Add an element to the right end of a sequence.
 -- Mnemonic: a triangle with the single element at the pointy end.
 instance Measured v a => Snoc (FingerTree v a) where
-  snoc (Empty                     ) a = Single a
+  snoc  Empty                       a = Single a
   snoc (Single a                  ) b = deep (One a) Empty (One b)
   snoc (Deep v pr m (Four a b c d)) e = m `seq` Deep (v `mappend` measure e) pr (m |> node3 a b c) (Two d e)
   snoc (Deep v pr m sf            ) x = Deep (v `mappend` measure x) pr m (snocDigit sf x)
