@@ -11,6 +11,9 @@ import qualified Hedgehog.Internal.Gen    as G
 import qualified Hedgehog.Internal.Shrink as S
 import qualified Hedgehog.Range           as R
 
+{- HLINT ignore "Use <=<"             -}
+{- HLINT ignore "Use record patterns" -}
+
 genList :: MonadGen m => Range Int -> m a -> m [a]
 genList range gen =
   G.sized $ \size ->
