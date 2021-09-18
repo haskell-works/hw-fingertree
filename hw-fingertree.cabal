@@ -20,11 +20,11 @@ category:               Data Structures
 homepage:               https://github.com/haskell-works/hw-fingertree#readme
 bug-reports:            https://github.com/haskell-works/hw-fingertree/issues
 maintainer:             John Ky <newhoggy@gmail.com>
-copyright:              (c) 2017-2020 John Ky
+copyright:              (c) 2017-2021 John Ky
                         (c) 2006 Ross Paterson, Ralf Hinze,
 license:                BSD-3-Clause
 license-file:           LICENSE
-tested-with:            GHC == 8.10.2, GHC == 8.8.3, GHC == 8.6.5, GHC == 8.4.4
+tested-with:            GHC == 9.0.1, GHC == 8.10.7, GHC == 8.8.4, GHC == 8.6.5
 build-type:             Simple
 
 source-repository head
