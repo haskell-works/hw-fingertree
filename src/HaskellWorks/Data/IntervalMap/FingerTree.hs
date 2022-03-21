@@ -54,7 +54,7 @@ import qualified Data.Semigroup               as S
 import qualified HaskellWorks.Data.FingerTree as FT
 
 #if !MIN_VERSION_base(4,13,0)
-  import Control.Applicative          ((<$>))
+import Control.Applicative          ((<$>))
 #endif
 
 ----------------------------------
