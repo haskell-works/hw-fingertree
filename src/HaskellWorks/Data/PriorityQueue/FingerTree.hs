@@ -1,8 +1,7 @@
 {-# LANGUAGE CPP                   #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-#if __GLASGOW_HASKELL__ >= 710
-{-# LANGUAGE AutoDeriveTypeable    #-}
-#endif
+{-# LANGUAGE TupleSections         #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.PriorityQueue.FingerTree
@@ -52,7 +51,6 @@ module HaskellWorks.Data.PriorityQueue.FingerTree
   ) where
 
 import Data.Bifunctor               (first)
-import Data.Foldable                (Foldable (foldMap))
 import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><), (|>))
 import Prelude                      hiding (null)
 
@@ -82,8 +80,6 @@ instance Ord k => S.Semigroup (Prio k v) where
 instance Ord k => Monoid (Prio k v) where
   mempty  = NoPrio
   {-# INLINE mempty #-}
-  mappend = appendPrio
-  {-# INLINE mappend #-}
 
 instance Ord k => Measured (Prio k v) (Entry k v) where
   measure (Entry k v) = Prio k v
@@ -106,8 +102,6 @@ instance Ord k => S.Semigroup (PQueue k v) where
 instance Ord k => Monoid (PQueue k v) where
   mempty = empty
   {-# INLINE mempty #-}
-  mappend = union
-  {-# INLINE mappend #-}
 
 -- | /O(1)/. The empty priority queue.
 empty :: Ord k => PQueue k v
@@ -180,11 +174,12 @@ minView q = fmap (first snd) (minViewWithKey q)
 minViewWithKey :: Ord k => PQueue k v -> Maybe ((k, v), PQueue k v)
 minViewWithKey (PQueue q)
   | FT.null q = Nothing
-  | otherwise = Just ((k, v), case FT.viewl r of
-    _ :< r' -> PQueue (l >< r')
-    _       -> error "can't happen")
-  where Prio k v = measure q
-        (l, r) = FT.split (below k) q
+  | otherwise = case measure q of
+      Prio k v -> case FT.split (below k) q of
+        (l, r) -> Just . ((k, v),) $ case FT.viewl r of
+          _ :< r' -> PQueue (l >< r')
+          _       -> error "can't happen"
+      NoPrio -> error "can't happen: queue has no priority"
 
 below :: Ord k => k -> Prio k v -> Bool
 below _ NoPrio      = False

@@ -2,9 +2,7 @@
 {-# LANGUAGE DeriveAnyClass        #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-#if __GLASGOW_HASKELL__ >= 710
-{-# LANGUAGE AutoDeriveTypeable    #-}
-#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.PriorityQueue.FingerTree
@@ -48,15 +46,16 @@ module HaskellWorks.Data.IntervalMap.FingerTree
   , dominators
   ) where
 
-import Control.Applicative          ((<$>))
 import Control.DeepSeq
-import Data.Foldable                (Foldable (foldMap))
-import Data.Traversable             (Traversable (traverse))
 import GHC.Generics
 import HaskellWorks.Data.FingerTree (FingerTree, Measured (..), ViewL (..), (<|), (><))
 
 import qualified Data.Semigroup               as S
 import qualified HaskellWorks.Data.FingerTree as FT
+
+#if !MIN_VERSION_base(4,13,0)
+  import Control.Applicative          ((<$>))
+#endif
 
 ----------------------------------
 -- 4.8 Application: interval trees
@@ -98,8 +97,6 @@ instance Ord v => S.Semigroup (IntInterval v) where
 instance Ord v => Monoid (IntInterval v) where
   mempty = NoInterval
   {-# INLINE mempty #-}
-  mappend = appendInterval
-  {-# INLINE mappend #-}
 
 instance (Ord v) => Measured (IntInterval v) (Node v a) where
   measure (Node i _) = IntInterval i (high i)
@@ -129,8 +126,6 @@ instance (Ord v) => S.Semigroup (IntervalMap v a) where
 instance (Ord v) => Monoid (IntervalMap v a) where
   mempty = empty
   {-# INLINE mempty #-}
-  mappend = union
-  {-# INLINE mappend #-}
 
 -- | /O(1)/.  The empty interval map.
 empty :: (Ord v) => IntervalMap v a

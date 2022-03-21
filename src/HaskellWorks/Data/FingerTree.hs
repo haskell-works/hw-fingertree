@@ -6,9 +6,7 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE UndecidableInstances   #-}
 {-# LANGUAGE TypeFamilies           #-}
-#if __GLASGOW_HASKELL__ >= 710
-{-# LANGUAGE AutoDeriveTypeable     #-}
-#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.FingerTree
@@ -77,9 +75,8 @@ module HaskellWorks.Data.FingerTree
   , (|>)
   ) where
 
-import Control.Applicative          (Applicative (pure, (<*>)), (<$>))
 import Control.DeepSeq
-import Data.Foldable                (Foldable (foldMap), toList)
+import Data.Foldable                (toList)
 import GHC.Generics                 (Generic)
 import HaskellWorks.Data.Container
 import HaskellWorks.Data.Cons
@@ -88,6 +85,10 @@ import HaskellWorks.Data.Ops
 import Prelude                      hiding (null, reverse)
 
 import qualified Data.Semigroup as S
+
+#if !MIN_VERSION_base(4,13,0)
+import Control.Applicative          (Applicative (pure, (<*>)), (<$>))
+#endif
 
 infixr 5 :<
 infixl 5 :>
@@ -123,8 +124,6 @@ instance Measured v a => S.Semigroup (FingerTree v a) where
 instance Measured v a => Monoid (FingerTree v a) where
   mempty = empty
   {-# INLINE mempty #-}
-  mappend = append
-  {-# INLINE mappend #-}
 
 instance Container (FingerTree v a) where
   type Elem (FingerTree v a) = a
