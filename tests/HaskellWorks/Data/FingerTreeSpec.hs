@@ -7,12 +7,12 @@
 
 module HaskellWorks.Data.FingerTreeSpec (spec) where
 
-import Control.Applicative          (Applicative (..))
+-- import Control.Applicative          (Applicative (..))
 import Control.Monad                (ap)
-import Data.Foldable                (Foldable (foldMap, foldl, foldr), all, toList)
-import Data.Functor                 ((<$>))
+import Data.Foldable                (toList)
+-- import Data.Functor                 ((<$>))
 import Data.List                    (inits)
-import Data.Traversable             (traverse)
+-- import Data.Traversable             (traverse)
 import HaskellWorks.Data.FingerTree
 import HaskellWorks.Hspec.Hedgehog
 import Hedgehog                     hiding (evalM)
@@ -140,14 +140,13 @@ evalM :: M a -> a
 evalM m = snd (runM m 0)
 
 instance Monad M where
-    return x = M (, x)
     M u >>= f = M $ \ m -> let (n, x) = u m in runM (f x) n
 
 instance Functor M where
     fmap f (M u) = M $ \ m -> let (n, x) = u m in (n, f x)
 
 instance Applicative M where
-    pure = return
+    pure x = M (, x)
     (<*>) = ap
 
 step :: M Int
